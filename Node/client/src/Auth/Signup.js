@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Signup() {
   const [Name, setName] = useState("");
@@ -8,22 +10,30 @@ function Signup() {
   const [Mobile, setMobile] = useState("");
   const [Password, setPassword] = useState("");
 
-  const nav = useNavigate()
+  const navigate = useNavigate();
 
-  function handleSubmit(e){
-    e.preventDefault()
+  function handleSubmit(e) {
+    e.preventDefault();
 
-    axios.post('http://localhost:8000/auth/signup',{Name,Email,Mobile,Password})
-    .then(res =>{
-        console.log(res.data.msg);
-        if(res.data.msg === "added"){
-            alert("signed up")
-            nav('/')
+    axios
+      .post("http://localhost:8000/auth/signup", {
+        Name,
+        Email,
+        Mobile,
+        Password,
+      })
+      .then((res) => {
+        if (res.data.msg === "added") {
+          toast.success("Signed up successfully!");
+          navigate("/"); // Navigate immediately
+        } else if (res.data.msg === "exist") {
+          toast.error("Email ID already exists.");
         }
-        else if(res.data.msg === "exist"){
-            alert("Email id already exist")
-        }
-    })
+      })
+      .catch((error) => {
+        toast.error("An error occurred. Please try again.");
+        console.error(error);
+      });
   }
 
   return (
@@ -31,72 +41,71 @@ function Signup() {
       <h1 className="text-center">Signup</h1>
       <div className="d-flex justify-content-center align-items-center">
         <form onSubmit={handleSubmit}>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class=" form-label">
+          <div className="mb-3">
+            <label htmlFor="nameInput" className="form-label">
               Name
             </label>
             <input
               onChange={(e) => setName(e.target.value)}
               type="text"
               style={{ width: "300px" }}
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
+              className="form-control"
+              id="nameInput"
               required
             />
           </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class=" form-label">
+          <div className="mb-3">
+            <label htmlFor="emailInput" className="form-label">
               Email address
             </label>
             <input
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               style={{ width: "300px" }}
-              class="form-control"
-              id="exampleInputEmail1"
+              className="form-control"
+              id="emailInput"
               aria-describedby="emailHelp"
               required
             />
-            <div id="emailHelp" class="form-text">
+            <div id="emailHelp" className="form-text">
               We'll never share your email with anyone else.
             </div>
           </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class=" form-label">
+          <div className="mb-3">
+            <label htmlFor="mobileInput" className="form-label">
               Mobile
             </label>
             <input
               onChange={(e) => setMobile(e.target.value)}
               type="number"
               style={{ width: "300px" }}
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
+              className="form-control"
+              id="mobileInput"
               required
             />
           </div>
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">
+          <div className="mb-3">
+            <label htmlFor="passwordInput" className="form-label">
               Password
             </label>
             <input
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               style={{ width: "300px" }}
-              class="form-control"
-              id="exampleInputPassword1"
+              className="form-control"
+              id="passwordInput"
               required
             />
           </div>
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" className="btn btn-primary">
             Submit
           </button>
           <p>
-            alraedy have an account <Link to={"/"}>Click Here</Link>
+            Already have an account? <Link to="/">Click Here</Link>
           </p>
         </form>
       </div>
+      <ToastContainer />
     </>
   );
 }
